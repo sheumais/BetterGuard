@@ -1,7 +1,7 @@
 BetterGuardAddon = BetterGuardAddon or {}
 local BG = BetterGuardAddon
 BG.name = "BetterGuard"
-BG.version = "1.0"
+BG.version = "2"
 BG.author = "TheMrPancake"
 
 -- Defaults
