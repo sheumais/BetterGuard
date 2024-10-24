@@ -85,6 +85,7 @@ local function DrawLineBetweenControls(x1, y1, x2, y2)
 
     -- Update colour every time
     backdrop:SetCenterColor(unpack(BG.centerColour))
+    backdrop:SetEdgeColor(unpack(BG.edgeColour))
 
     -- The midpoint between the two icons
     local centerX = (x1 + x2) / 2
@@ -179,5 +180,7 @@ function BG.RemoveLine() -- /script BetterGuardAddon.RemoveLine()
     end
     if (line) then
         line:SetHidden(true)
+        backdrop:SetEdgeColor(unpack({0, 0, 0, 0}))
+        backdrop:SetCenterColor(unpack({0, 0, 0, 0}))
     end
 end
