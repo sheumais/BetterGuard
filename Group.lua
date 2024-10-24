@@ -7,12 +7,13 @@ local function generateGroupList()
     BG.groupMembers = {}
     local groupSize = GetGroupSize()
     if groupSize == 0 then return end
-    
-    for i = 1, groupSize do
-        BG.groupMembers[GetRawUnitName("group" .. i)] = "group" .. i
+    for i = 1, GetGroupSize() do
+        local unitTag = GetGroupUnitTagByIndex(i)
+        if unitTag then
+          -- Important to check if unitTag exists here as it might be nil due to group's unitttags being changed as you run around and switch zones without a loading screen, inside dungeons e.g.
+             BG.groupMembers[GetRawUnitName(unitTag)] = unitTag 
+        end
     end
 end
 
-EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_JOINED, generateGroupList)
-EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_LEFT, generateGroupList)
-EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, generateGroupList)
+BG.generateGroupList = generateGroupList

@@ -14,6 +14,12 @@ BG.breakingColour = {1, 0, 0, alpha}
 local function OnAddOnLoaded(_, name)
     if name ~= BG.name then return end
     EVENT_MANAGER:UnregisterForEvent(BG.name, EVENT_ADD_ON_LOADED)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_JOINED, BG.generateGroupList)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_LEFT, BG.generateGroupList)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, BG.generateGroupList)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_COMBAT_EVENT, BG.monitorGuardStatus)
+    EVENT_MANAGER:AddFilterForEvent(BG.name, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 61511)
+
     BG.RemoveLine()
 end
 
