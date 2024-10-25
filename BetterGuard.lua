@@ -1,7 +1,7 @@
 BetterGuardAddon = BetterGuardAddon or {}
 local BG = BetterGuardAddon
 BG.name = "BetterGuard"
-BG.version = "2"
+BG.version = "2.1"
 BG.author = "TheMrPancake"
 
 -- Defaults
@@ -21,6 +21,7 @@ local function OnAddOnLoaded(_, name)
     EVENT_MANAGER:AddFilterForEvent(BG.name, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 61511)
 
     BG.RemoveLine()
+    BG.generateGroupList()
 end
 
 EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded)
