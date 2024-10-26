@@ -3,14 +3,13 @@ local BG = BetterGuardAddon
 
 local characterName = GetRawUnitName("player")
 
-local function monitorGuardStatus(event, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId, overflow)
+local function MonitorGuardStatus(event, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId, overflow)
     if result == ACTION_RESULT_EFFECT_GAINED then -- Guard Tether Created
-        if sourceName == characterName then -- Your own guard tether
-            local sourceGroupMember = BG.groupMembers[sourceName]
-            local targetGroupMember = BG.groupMembers[targetName]
-            if sourceGroupMember  ~= nil and targetGroupMember  ~= nil then -- You and your guard target are in a group
-                BG.DrawLineBetweenPlayers(sourceGroupMember , targetGroupMember )
-            end
+        local sourceGroupMember = BG.groupMembers[sourceName]
+        local targetGroupMember = BG.groupMembers[targetName]
+        if sourceGroupMember == nil or targetGroupMember == nil then return end
+        if (sourceName == characterName) or (BG.savedVariables.showGuardOnYou and targetName == characterName) then
+            BG.DrawLineBetweenPlayers(sourceGroupMember, targetGroupMember)
         end
     elseif result == ACTION_RESULT_EFFECT_FADED then -- Guard Tether Destroyed
         BG.RemoveLine()
@@ -19,4 +18,4 @@ local function monitorGuardStatus(event, result, isError, abilityName, abilityGr
     end
 end
 
-BG.monitorGuardStatus = monitorGuardStatus
+BG.MonitorGuardStatus = MonitorGuardStatus

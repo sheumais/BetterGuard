@@ -1,9 +1,10 @@
 ## Title: |c3C80ffBetter Guard|r
 ## Description: Draws a more visible line on your screen when guarding groupmates
 ## Author: TheMrPancake
-## DependsOn: OdySupportIcons
+## DependsOn: OdySupportIcons LibAddonMenu-2.0>=37
 ## APIVersion: 101043
-## AddOnVersion: 2.2
+## AddOnVersion: 2.3
+## SavedVariables: BGSavedVariables
 
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 
 ; The Elder Scrolls® and related logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. 
@@ -16,3 +17,4 @@ Line.lua
 Guard.lua
 Group.lua
 Update.lua
+Settings.lua

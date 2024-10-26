@@ -91,12 +91,12 @@ local function DrawLineBetweenControls(x1, y1, x2, y2)
         line = WINDOW_MANAGER:CreateControl("$(parent)GuardLine", OSI.win, CT_CONTROL)
         backdrop = WINDOW_MANAGER:CreateControl("$(parent)Backdrop", line, CT_BACKDROP)
         backdrop:SetAnchorFill()
-        backdrop:SetEdgeColor(unpack(BG.edgeColour))
+        backdrop:SetEdgeColor(unpack(BG.savedVariables.edgeColour))
     end
 
     -- Update colour every time
-    backdrop:SetCenterColor(unpack(BG.centerColour))
-    backdrop:SetEdgeColor(unpack(BG.edgeColour))
+    backdrop:SetCenterColor(unpack(BG.savedVariables.centerColour))
+    backdrop:SetEdgeColor(unpack(BG.savedVariables.edgeColour))
 
     -- The midpoint between the two icons
     local centerX = (x1 + x2) / 2
@@ -108,7 +108,7 @@ local function DrawLineBetweenControls(x1, y1, x2, y2)
     local x = x2 - x1
     local y = y2 - y1
     local length = math.sqrt(x*x + y*y)
-    line:SetDimensions(length, 12)
+    line:SetDimensions(length, BG.savedVariables.width)
     local angle = math.atan(y/x)
     line:SetTransformRotationZ(-angle)
 end
@@ -123,7 +123,7 @@ local function lerp(col1, col2, t)
         col1[1] + (col2[1] - col1[1]) * t,
         col1[2] + (col2[2] - col1[2]) * t,
         col1[3] + (col2[3] - col1[3]) * t,
-        BG.alpha
+        BG.savedVariables.alpha
     }
 end
 
@@ -134,12 +134,12 @@ local function calculateLineColour(distance)
     local safezone = 5
     local max = 15 -- max is actually about 16.25, but whatever lol
     local interpolationFactor = math.max((distance - safezone), 0) / (max - safezone)
-    local lerpColour = lerp(BG.safeColour, BG.breakingColour, interpolationFactor)
+    local lerpColour = lerp(BG.savedVariables.safeColour, BG.savedVariables.breakingColour, interpolationFactor)
     return lerpColour
 end
 
 ---------------------------------------------------------------------
--- Override OSI.OnUpdate to draw the line after the normal update is done
+-- Override BG.OnUpdate to draw the line after the normal update is done
 ---------------------------------------------------------------------
 local origUpdate 
 function BG.DrawLineBetweenPlayers(unitTag1, unitTag2) -- /script BetterGuardAddon.DrawLineBetweenPlayers("group1", "group2")
@@ -162,7 +162,7 @@ function BG.DrawLineBetweenPlayers(unitTag1, unitTag2) -- /script BetterGuardAdd
             local distance = GetDistance(unitTag1, unitTag2, false, true)
             local lineCol = calculateLineColour(distance)
             if (lineCol ~= nil) then 
-                BG.centerColour = lineCol
+                BG.savedVariables.centerColour = lineCol
             end
 
             if (not isInFront1 and not isInFront2) then
@@ -182,7 +182,7 @@ function BG.DrawLineBetweenPlayers(unitTag1, unitTag2) -- /script BetterGuardAdd
     end
 end
 
--- Remove line by restoring the original OSI.OnUpdate
+-- Remove line by restoring the original BG.OnUpdate
 function BG.RemoveLine() -- /script BetterGuardAddon.RemoveLine()
     if (origUpdate) then
         BG.OnUpdate = origUpdate
