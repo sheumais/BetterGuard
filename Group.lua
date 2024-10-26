@@ -3,7 +3,7 @@ local BG = BetterGuardAddon
 
 BG.groupMembers = {}
 
-local function generateGroupList()
+local function GenerateGroupList()
     BG.groupMembers = {}
     local groupSize = GetGroupSize()
     if groupSize == 0 then return end
@@ -16,4 +16,4 @@ local function generateGroupList()
     end
 end
 
-BG.generateGroupList = generateGroupList
+BG.GenerateGroupList = GenerateGroupList

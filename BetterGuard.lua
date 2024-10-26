@@ -1,7 +1,7 @@
 BetterGuardAddon = BetterGuardAddon or {}
 local BG = BetterGuardAddon
 BG.name = "BetterGuard"
-BG.version = "2.1"
+BG.version = "2.2"
 BG.author = "TheMrPancake"
 BG.GUARDS = { -- Guard morphs/levels
     [61511] = true,
@@ -25,9 +25,9 @@ BG.breakingColour = {1, 0, 0, alpha}
 local function OnAddOnLoaded(_, name)
     if name ~= BG.name then return end
     EVENT_MANAGER:UnregisterForEvent(BG.name, EVENT_ADD_ON_LOADED)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_JOINED, BG.generateGroupList)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_LEFT, BG.generateGroupList)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, BG.generateGroupList)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_JOINED, BG.GenerateGroupList)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_LEFT, BG.GenerateGroupList)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, BG.GenerateGroupList)
 
     local i = 0
     for abilityId in pairs(BG.GUARDS) do
@@ -38,7 +38,7 @@ local function OnAddOnLoaded(_, name)
     end
 
     BG.RemoveLine()
-    BG.generateGroupList()
+    BG.GenerateGroupList()
 end
 
 EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded)

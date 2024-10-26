@@ -17,7 +17,18 @@ local function GetDistance( unitTag1, unitTag2, useHeight, validate )
 	end
 end
 
-
+---------------------------------------------------------------------
+-- Convert in-world coordinates to view via fancy linear algebra.
+-- This is ripped almost entirely from OSI, with only minor changes
+-- to not modify icons, and instead only return coordinates
+-- Credit: OdySupportIcons (@Lamierina7)
+--
+-- I'm [Kyzeragon] doing this because OSI icons do not show/update when the
+-- position is far enough behind the camera, and therefore I can't
+-- naively draw a line between 2 player icons, because one or both
+-- could be hidden or have outdated coords.
+--
+-- Returns: x, y, isInFront (of camera)
 ---------------------------------------------------------------------
 -- FROM CRUTCH ALERTS https://www.esoui.com/downloads/info3137-CrutchAlerts.html
 ---------------------------------------------------------------------
@@ -77,7 +88,7 @@ local backdrop
 local function DrawLineBetweenControls(x1, y1, x2, y2)
     -- Create a line if it doesn't exist
     if (line == nil) then
-        line = WINDOW_MANAGER:CreateControl("$(parent)Line", OSI.win, CT_CONTROL)
+        line = WINDOW_MANAGER:CreateControl("$(parent)GuardLine", OSI.win, CT_CONTROL)
         backdrop = WINDOW_MANAGER:CreateControl("$(parent)Backdrop", line, CT_BACKDROP)
         backdrop:SetAnchorFill()
         backdrop:SetEdgeColor(unpack(BG.edgeColour))
@@ -130,18 +141,18 @@ end
 ---------------------------------------------------------------------
 -- Override OSI.OnUpdate to draw the line after the normal update is done
 ---------------------------------------------------------------------
-local origOSIUpdate 
+local origUpdate 
 function BG.DrawLineBetweenPlayers(unitTag1, unitTag2) -- /script BetterGuardAddon.DrawLineBetweenPlayers("group1", "group2")
     if (line) then
         line:SetHidden(false)
     end
 
     -- In case this is called twice in a row without a RemoveLine in between
-    if (not origOSIUpdate) then
-        origOSIUpdate = OSI.OnUpdate
+    if (not origUpdate) then
+        origUpdate = BG.OnUpdate
 
-        OSI.OnUpdate = function(...)
-            origOSIUpdate(...)
+        BG.OnUpdate = function(...)
+            origUpdate(...)
             local x, y, z
             _, x, y, z = GetUnitRawWorldPosition(unitTag1)
             local x1, y1, isInFront1 = GetViewCoordinates(x, y + 150, z)
@@ -167,16 +178,16 @@ function BG.DrawLineBetweenPlayers(unitTag1, unitTag2) -- /script BetterGuardAdd
         end
 
         -- Since the function is registered directly for polling, we need to restart the polling with the replaced func
-        OSI.StartPolling()
+        BG.StartPolling()
     end
 end
 
 -- Remove line by restoring the original OSI.OnUpdate
 function BG.RemoveLine() -- /script BetterGuardAddon.RemoveLine()
-    if (origOSIUpdate) then
-        OSI.OnUpdate = origOSIUpdate
-        origOSIUpdate = nil
-        OSI.StartPolling()
+    if (origUpdate) then
+        BG.OnUpdate = origUpdate
+        origUpdate = nil
+        BG.StopPolling()
     end
     if (line) then
         line:SetHidden(true)

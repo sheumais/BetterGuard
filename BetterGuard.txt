@@ -3,7 +3,7 @@
 ## Author: TheMrPancake
 ## DependsOn: OdySupportIcons
 ## APIVersion: 101043
-## AddOnVersion: 2.1
+## AddOnVersion: 2.2
 
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 
 ; The Elder Scrolls® and related logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. 
@@ -15,3 +15,4 @@ BetterGuard.lua
 Line.lua
 Guard.lua
 Group.lua
+Update.lua
