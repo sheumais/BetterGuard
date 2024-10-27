@@ -18,25 +18,48 @@ local panelData = {
 }
 
 local optionsTable = {
-    [1] = {
+    {
         type = "description",
         title = nil,
-        text = "This addon creates a coloured line between guard tethered players.",
+        text = "Create a line between yourself and another group member when guarded.",
     },
-    [2] = {type = "divider"},
-    [3] = { 
+    {
+        type = "header",
+        name = "Behaviour",
+    },
+    { 
         type = "checkbox",
         name = "Show other's tether",
-        tooltip = "Show a tether, when someone else guards you.",
+        tooltip = "Show a tether when someone else guards you.",
         getFunc = function() return BG.savedVariables.showGuardOnYou end,
         setFunc = function(value) BG.savedVariables.showGuardOnYou = value end,
         default = BG.defaults.showGuardOnYou,
     },
-    [4] = {type = "divider"},
-    [5] = {
+    {
+        type = "slider",
+        name = "Safe distance",
+        tooltip = "Meters distance at which safe colour should be used",
+        min = 0,
+        max = 15,
+        step = 0.5,
+        getFunc = function() return BG.savedVariables.safeDistance end,
+        setFunc = function(value) BG.savedVariables.safeDistance = value end,
+        disabled = function() return BG.savedVariables.rainbowLine end,
+        default = BG.defaults.safeDistance,
+    },
+    {
+        type = "description",
+        title = nil,
+        text = "", -- Spacing
+    },
+    {
+        type = "header",
+        name = "Appearance",
+    },
+    {
         type = "slider",
         name = "Alpha",
-        tooltip = "Alpha/Transparency",
+        tooltip = "Alpha/Transparency/Opacity",
         min = 1,
         max = 100,
         step = 1,
@@ -44,7 +67,7 @@ local optionsTable = {
         setFunc = function(value) BG.savedVariables.alpha = value / 100 end,
         default = BG.defaults.alpha * 100,
     },
-    [6] = {
+    {
         type = "slider",
         name = "Width",
         tooltip = "Width of line",
@@ -55,31 +78,51 @@ local optionsTable = {
         setFunc = function(value) BG.savedVariables.width = value end,
         default = BG.defaults.width,
     },
-    [7] = {
+    {
         type = "colorpicker",
-        name = "Edge Colour",
-        tooltip = "Edge Colour",
+        name = "Border Colour",
+        tooltip = "Colour of border around the line",
         getFunc = function() return unpack(BG.savedVariables.edgeColour) end,
         setFunc = function(r, g, b, a) BG.savedVariables.edgeColour = {r, g, b, BG.savedVariables.alpha} end,
+        disabled = function() return BG.savedVariables.rainbowLine or not BG.savedVariables.showBorder end,
         default = ZO_ColorDef:New(unpack(BG.defaults.edgeColour)),
     },
-    [8] = {
+    {
         type = "colorpicker",
         name = "Safe Colour",
         tooltip = "Colour to use when close/safe",
         getFunc = function() return unpack(BG.savedVariables.safeColour) end,
         setFunc = function(r, g, b, a) BG.savedVariables.safeColour = {r, g, b, BG.savedVariables.alpha} end,
+        disabled = function() return BG.savedVariables.rainbowLine end,
         default = ZO_ColorDef:New(unpack(BG.defaults.safeColour)),
     },
-    [9] = {
+    {
         type = "colorpicker",
         name = "Danger Colour",
         tooltip = "Colour to use when guard is close to breaking",
         getFunc = function() return unpack(BG.savedVariables.breakingColour) end,
         setFunc = function(r, g, b, a) BG.savedVariables.breakingColour = {r, g, b, BG.savedVariables.alpha} end,
+        disabled = function() return BG.savedVariables.rainbowLine end,
         default = ZO_ColorDef:New(unpack(BG.defaults.breakingColour)),
     },
-    [10] = {type = "divider"},
+    { 
+        type = "checkbox",
+        name = "Show border",
+        tooltip = "Should the line have a border?",
+        getFunc = function() return BG.savedVariables.showBorder end,
+        setFunc = function(value) BG.savedVariables.showBorder = value end,
+        disabled = function() return BG.savedVariables.rainbowLine end,
+        default = BG.defaults.showBorder,
+    },
+    { 
+        type = "checkbox",
+        name = "Rainbow tether",
+        tooltip = "Make your tether glow with the power of RGB",
+        getFunc = function() return BG.savedVariables.rainbowLine end,
+        setFunc = function(value) BG.savedVariables.rainbowLine = value end,
+        default = BG.defaults.rainbowLine,
+    },
+    {type = "divider"},
 }
 
 local function RegisterLAMPanel()

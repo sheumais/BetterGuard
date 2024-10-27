@@ -3,7 +3,7 @@ local BG = BetterGuardAddon
 BG.name = "BetterGuard"
 BG.nameSpaced = "Better Guard"
 BG.nameTitle = "|c3C80ffBETTER GUARD|r"
-BG.version = "2.3"
+BG.version = "2.4"
 BG.author = "TheMrPancake"
 BG.GUARDS = { -- Guard morphs/levels
     [61511] = true,
@@ -20,11 +20,14 @@ BG.savedVariablesVersion = 1 -- don't change this otherwise it will wipe everyon
 BG.defaults = {
     alpha = 1,
     width = 12,
+    safeDistance = 5,
     centerColour = {1, 0, 1, 1}, -- debug magenta
     edgeColour = {1, 1, 1, 1}, -- white
     safeColour = {0, 1, 0, 1}, -- green
     breakingColour = {1, 0, 0, 1}, -- red
     showGuardOnYou = false,
+    rainbowLine = false,
+    showBorder = true,
 }
 BG.window = GetWindowManager()
 

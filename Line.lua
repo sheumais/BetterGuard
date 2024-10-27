@@ -96,7 +96,12 @@ local function DrawLineBetweenControls(x1, y1, x2, y2)
 
     -- Update colour every time
     backdrop:SetCenterColor(unpack(BG.savedVariables.centerColour))
-    backdrop:SetEdgeColor(unpack(BG.savedVariables.edgeColour))
+
+    if BG.savedVariables.showBorder then 
+        backdrop:SetEdgeColor(unpack(BG.savedVariables.edgeColour))
+    else 
+        backdrop:SetEdgeColor(unpack(BG.savedVariables.centerColour)) -- make border same as inside
+    end
 
     -- The midpoint between the two icons
     local centerX = (x1 + x2) / 2
@@ -111,6 +116,28 @@ local function DrawLineBetweenControls(x1, y1, x2, y2)
     line:SetDimensions(length, BG.savedVariables.width)
     local angle = math.atan(y/x)
     line:SetTransformRotationZ(-angle)
+end
+
+-- Function to convert HSV to RGB. Assumes S = 1 and V = 1
+local function hueToRGB(h)
+    local x = 1 - math.abs((h / 60) % 2 - 1)
+    local r, g, b
+
+    if h >= 0 and h < 60 then
+        r, g, b = 1, x, 0
+    elseif h >= 60 and h < 120 then
+        r, g, b = x, 1, 0
+    elseif h >= 120 and h < 180 then
+        r, g, b = 0, 1, x
+    elseif h >= 180 and h < 240 then
+        r, g, b = 0, x, 1
+    elseif h >= 240 and h < 300 then
+        r, g, b = x, 0, 1
+    else
+        r, g, b = 1, 0, x
+    end
+
+    return {r, g, b, BG.savedVariables.alpha}
 end
 
 
@@ -130,9 +157,19 @@ end
 ---------------------------------------------------------------------
 -- Get colour for line based on distance between players
 ---------------------------------------------------------------------
+local index = 0
 local function calculateLineColour(distance)
-    local safezone = 5
-    local max = 15 -- max is actually about 16.25, but whatever lol
+    if BG.savedVariables.rainbowLine then
+        local rainbowColour = hueToRGB(index)
+        if index < 360 then
+            index = index + 1
+        else
+            index = 0
+        end
+        return rainbowColour
+    end
+    local safezone = BG.savedVariables.safeDistance
+    local max = 16 -- max is actually about 16.25, but whatever lol
     local interpolationFactor = math.max((distance - safezone), 0) / (max - safezone)
     local lerpColour = lerp(BG.savedVariables.safeColour, BG.savedVariables.breakingColour, interpolationFactor)
     return lerpColour
