@@ -111,7 +111,6 @@ local optionsTable = {
         tooltip = "Should the line have a border?",
         getFunc = function() return BG.savedVariables.showBorder end,
         setFunc = function(value) BG.savedVariables.showBorder = value end,
-        disabled = function() return BG.savedVariables.rainbowLine end,
         default = BG.defaults.showBorder,
     },
     { 
