@@ -26,6 +26,36 @@ BG.defaults = {
     breakingColour = {1, 0, 0, 1}, -- red
     showGuardOnYou = false,
 }
+BG.window = GetWindowManager()
+
+
+--------------------------
+-- From OdySupportIcons --
+--------------------------
+function BG.CreateUI()
+    -- create render space control
+    BG.ctrl = BG.window:CreateControl( "BGCtrl", GuiRoot, CT_CONTROL )
+    BG.ctrl:SetAnchorFill( GuiRoot )
+    BG.ctrl:Create3DRenderSpace()
+    BG.ctrl:SetHidden( true )
+
+    -- create parent window for icons
+	BG.win = BG.window:CreateTopLevelWindow( "BGWin" )
+    BG.win:SetClampedToScreen( true )
+    BG.win:SetMouseEnabled( false )
+    BG.win:SetMovable( false )
+    BG.win:SetAnchorFill( GuiRoot )
+	BG.win:SetDrawLayer( DL_BACKGROUND )
+	BG.win:SetDrawTier( DT_LOW )
+	BG.win:SetDrawLevel( 0 )
+
+    -- create parent window scene fragment
+	local frag = ZO_HUDFadeSceneFragment:New( BG.win )
+	HUD_UI_SCENE:AddFragment( frag )
+    HUD_SCENE:AddFragment( frag )
+    LOOT_SCENE:AddFragment( frag )
+end
+
 
 local function OnAddOnLoaded(_, name)
     if name ~= BG.name then return end
@@ -46,9 +76,12 @@ local function OnAddOnLoaded(_, name)
         EVENT_MANAGER:AddFilterForEvent(eventName, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, abilityId)
     end
 
+    BG.CreateUI()
     BG.RemoveLine()
     BG.GenerateGroupList()
-    BG.RegisterLAMPanel()
+    if LibAddonMenu2 then
+        BG.RegisterLAMPanel()
+    end
 end
 
 EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded)

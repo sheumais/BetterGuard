@@ -1,7 +1,8 @@
 ## Title: |c3C80ffBetter Guard|r
 ## Description: Draws a more visible line on your screen when guarding groupmates
 ## Author: TheMrPancake
-## DependsOn: OdySupportIcons LibAddonMenu-2.0>=37
+## DependsOn:
+## OptionalDependsOn: LibAddonMenu-2.0>=37
 ## APIVersion: 101043
 ## AddOnVersion: 2.3
 ## SavedVariables: BGSavedVariables

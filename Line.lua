@@ -34,13 +34,13 @@ end
 ---------------------------------------------------------------------
 local function GetViewCoordinates(wX, wY, wZ)
     -- prepare render space
-    Set3DRenderSpaceToCurrentCamera( OSI.ctrl:GetName() )
+    Set3DRenderSpaceToCurrentCamera( BG.ctrl:GetName() )
     
     -- retrieve camera world position and orientation vectors
-    local cX, cY, cZ = GuiRender3DPositionToWorldPosition( OSI.ctrl:Get3DRenderSpaceOrigin() )
-    local fX, fY, fZ = OSI.ctrl:Get3DRenderSpaceForward()
-    local rX, rY, rZ = OSI.ctrl:Get3DRenderSpaceRight()
-    local uX, uY, uZ = OSI.ctrl:Get3DRenderSpaceUp()
+    local cX, cY, cZ = GuiRender3DPositionToWorldPosition( BG.ctrl:Get3DRenderSpaceOrigin() )
+    local fX, fY, fZ = BG.ctrl:Get3DRenderSpaceForward()
+    local rX, rY, rZ = BG.ctrl:Get3DRenderSpaceRight()
+    local uX, uY, uZ = BG.ctrl:Get3DRenderSpaceUp()
 
     -- https://semath.info/src/inverse-cofactor-ex4.html
     -- calculate determinant for camera matrix
@@ -88,7 +88,7 @@ local backdrop
 local function DrawLineBetweenControls(x1, y1, x2, y2)
     -- Create a line if it doesn't exist
     if (line == nil) then
-        line = WINDOW_MANAGER:CreateControl("$(parent)GuardLine", OSI.win, CT_CONTROL)
+        line = WINDOW_MANAGER:CreateControl("$(parent)GuardLine", BG.win, CT_CONTROL)
         backdrop = WINDOW_MANAGER:CreateControl("$(parent)Backdrop", line, CT_BACKDROP)
         backdrop:SetAnchorFill()
         backdrop:SetEdgeColor(unpack(BG.savedVariables.edgeColour))
