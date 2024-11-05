@@ -3,7 +3,7 @@
 ## Author: TheMrPancake
 ## DependsOn:
 ## OptionalDependsOn: LibAddonMenu-2.0>=37
-## APIVersion: 101043
+## APIVersion: 101044
 ## AddOnVersion: 2.5
 ## SavedVariables: BGSavedVariables
 
