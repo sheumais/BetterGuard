@@ -4,7 +4,7 @@
 ## DependsOn:
 ## OptionalDependsOn: LibAddonMenu-2.0>=37
 ## APIVersion: 101044
-## AddOnVersion: 2.5
+## AddOnVersion: 2.6
 ## SavedVariables: BGSavedVariables
 
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 

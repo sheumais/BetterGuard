@@ -3,7 +3,7 @@ local BG = BetterGuardAddon
 BG.name = "BetterGuard"
 BG.nameSpaced = "Better Guard"
 BG.nameTitle = "|c3C80ffBETTER GUARD|r"
-BG.version = "2.5"
+BG.version = "2.6"
 BG.author = "TheMrPancake"
 BG.GUARDS = { -- Guard morphs/levels
     [61511] = true,
@@ -70,6 +70,8 @@ local function OnAddOnLoaded(_, name)
     EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_JOINED, BG.GenerateGroupList)
     EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_LEFT, BG.GenerateGroupList)
     EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, BG.GenerateGroupList)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_LINKED_WORLD_POSITION_CHANGED, BG.RemoveLine)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, BG.RemoveLine)
     EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ALIVE, BG.RemoveLine)
     EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_DEAD, BG.RemoveLine)
 

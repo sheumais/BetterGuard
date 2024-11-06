@@ -197,6 +197,12 @@ function BG.DrawLineBetweenPlayers(unitTag1, unitTag2) -- /script BetterGuardAdd
             local x2, y2, isInFront2 = GetViewCoordinates(x, y + 150, z)
 
             local distance = GetDistance(unitTag1, unitTag2, false, true)
+
+            if (distance > 16.5) then
+                BG.RemoveLine()
+                return
+            end
+
             local lineCol = calculateLineColour(distance)
             if (lineCol ~= nil) then 
                 BG.savedVariables.centerColour = lineCol
