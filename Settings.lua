@@ -29,7 +29,7 @@ local optionsTable = {
     },
     { 
         type = "checkbox",
-        name = "Show other's tether",
+        name = "Show tether on you",
         tooltip = "Show a tether when someone else guards you.",
         getFunc = function() return BG.savedVariables.showGuardOnYou end,
         setFunc = function(value) BG.savedVariables.showGuardOnYou = value end,
@@ -38,7 +38,7 @@ local optionsTable = {
     {
         type = "slider",
         name = "Safe distance",
-        tooltip = "Meters distance at which safe colour should be used",
+        tooltip = "Meters distance under which safe colour should be used",
         min = 0,
         max = 15,
         step = 0.5,
