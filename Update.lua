@@ -1,10 +1,10 @@
 BetterGuardAddon = BetterGuardAddon or {}
 local BG = BetterGuardAddon
 
-BG.interval = 10
+BG.interval = 7
 
 function BG.OnUpdate()
-    -- purposefully blank
+    BG.OnUpdateLine(BG.unitTag1, BG.unitTag2)
 end
 
 function BG.StopPolling()

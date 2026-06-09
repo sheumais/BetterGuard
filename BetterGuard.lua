@@ -3,7 +3,7 @@ local BG = BetterGuardAddon
 BG.name = "BetterGuard"
 BG.nameSpaced = "Better Guard"
 BG.nameTitle = "|c3C80ffBETTER GUARD|r"
-BG.version = "2.6"
+BG.version = "2.7"
 BG.author = "TheMrPancake"
 BG.GUARDS = { -- Guard morphs/levels
     [61511] = true,
@@ -16,44 +16,33 @@ BG.GUARDS = { -- Guard morphs/levels
     [63346] = true,
     [63351] = true,
 }
-BG.savedVariablesVersion = 1 -- don't change this otherwise it will wipe everyone's saved variables
 BG.defaults = {
-    alpha = 1,
+    alpha = 0.8,
     width = 12,
-    safeDistance = 5,
-    centerColour = {1, 0, 1, 1}, -- debug magenta
-    edgeColour = {1, 1, 1, 1}, -- white
+    safeDistance = 7,
     safeColour = {0, 1, 0, 1}, -- green
     breakingColour = {1, 0, 0, 1}, -- red
-    showGuardOnYou = false,
+    showGuardOnYou = true,
     rainbowLine = false,
-    showBorder = true,
+    depthBuffer = false,
 }
 BG.window = GetWindowManager()
+BG.unitTag1 = ""
+BG.unitTag2 = ""
 
-
---------------------------
--- From OdySupportIcons --
---------------------------
 function BG.CreateUI()
-    -- create render space control
-    BG.ctrl = BG.window:CreateControl( "BGCtrl", GuiRoot, CT_CONTROL )
+    BG.ctrl = BG.window:CreateControl( "BetterGuardControl", GuiRoot, CT_CONTROL )
     BG.ctrl:SetAnchorFill( GuiRoot )
     BG.ctrl:Create3DRenderSpace()
     BG.ctrl:SetHidden( true )
 
-    -- create parent window for icons
-	BG.win = BG.window:CreateTopLevelWindow( "BGWin" )
-    BG.win:SetClampedToScreen( true )
-    BG.win:SetMouseEnabled( false )
-    BG.win:SetMovable( false )
-    BG.win:SetAnchorFill( GuiRoot )
-	BG.win:SetDrawLayer( DL_BACKGROUND )
-	BG.win:SetDrawTier( DT_LOW )
-	BG.win:SetDrawLevel( 0 )
+    BG.depthwin = BG.window:CreateTopLevelWindow( "BetterGuard3DWindow" )
+    BG.depthwin:SetDrawLayer( DL_BACKGROUND )
+	BG.depthwin:SetDrawTier( DT_LOW )
+	BG.depthwin:SetDrawLevel( -999 )
+    BG.depthwin:Create3DRenderSpace()
 
-    -- create parent window scene fragment
-	local frag = ZO_HUDFadeSceneFragment:New( BG.win )
+	local frag = ZO_HUDFadeSceneFragment:New( BG.depthwin )
 	HUD_UI_SCENE:AddFragment( frag )
     HUD_SCENE:AddFragment( frag )
     LOOT_SCENE:AddFragment( frag )
@@ -63,24 +52,28 @@ end
 local function OnAddOnLoaded(_, name)
     if name ~= BG.name then return end
     EVENT_MANAGER:UnregisterForEvent(BG.name, EVENT_ADD_ON_LOADED)
-    
-    savedVariables = ZO_SavedVars:NewCharacterIdSettings("BGSavedVariables", BG.savedVariablesVersion, nil, BG.defaults)
-    BG.savedVariables = savedVariables
+    BG.savedVariables = ZO_SavedVars:NewCharacterIdSettings("BetterGuardSavedVariables", 1, nil, BG.defaults)
 
     EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_JOINED, BG.GenerateGroupList)
     EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_GROUP_MEMBER_LEFT, BG.GenerateGroupList)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, BG.GenerateGroupList)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_LINKED_WORLD_POSITION_CHANGED, BG.RemoveLine)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ACTIVATED, BG.RemoveLine)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ALIVE, BG.RemoveLine)
-    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_DEAD, BG.RemoveLine)
+    EVENT_MANAGER:RegisterForEvent(BG.name.."Generate", EVENT_PLAYER_ACTIVATED, BG.GenerateGroupList)
 
-    local i = 0
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_LINKED_WORLD_POSITION_CHANGED, BG.GuardLost)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_TELEPORTED_LOCALLY, BG.GuardLost)
+    EVENT_MANAGER:RegisterForEvent(BG.name.."Activate", EVENT_PLAYER_ACTIVATED, BG.GuardLost)
+    EVENT_MANAGER:RegisterForEvent(BG.name.."Deactivate", EVENT_PLAYER_DEACTIVATED, BG.GuardLost)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_ALIVE, BG.GuardLost)
+    EVENT_MANAGER:RegisterForEvent(BG.name, EVENT_PLAYER_DEAD, BG.GuardLost)
+
     for abilityId in pairs(BG.GUARDS) do
-        i = i + 1
-        local eventName = BG.name..i
-        EVENT_MANAGER:RegisterForEvent(eventName, EVENT_COMBAT_EVENT, BG.MonitorGuardStatus)
+        local eventName = BG.name..abilityId.."EffectGained"
+        EVENT_MANAGER:RegisterForEvent(eventName, EVENT_COMBAT_EVENT, BG.GuardGained)
         EVENT_MANAGER:AddFilterForEvent(eventName, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, abilityId)
+        EVENT_MANAGER:AddFilterForEvent(eventName, EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_EFFECT_GAINED)
+        eventName = BG.name..abilityId.."EffectFaded"
+        EVENT_MANAGER:RegisterForEvent(eventName, EVENT_COMBAT_EVENT, BG.GuardLost)
+        EVENT_MANAGER:AddFilterForEvent(eventName, EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, abilityId)
+        EVENT_MANAGER:AddFilterForEvent(eventName, EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_EFFECT_FADED)
     end
 
     BG.CreateUI()
