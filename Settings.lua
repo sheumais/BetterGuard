@@ -99,7 +99,7 @@ local optionsTable = {
     { 
         type = "checkbox",
         name = "Use Depth Buffer",
-        tooltip = "Should the line be hidden behind game objects and enemies?",
+        tooltip = "Hide the line behind objects and enemies",
         warning = "Requires SubSampling on High",
         getFunc = function() return BG.savedVariables.depthBuffer end,
         setFunc = function(value) BG.savedVariables.depthBuffer = value end,

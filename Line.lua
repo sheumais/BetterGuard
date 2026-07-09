@@ -44,11 +44,24 @@ local function calculateLineColour(distance)
     return lerpColour
 end
 
+local Quaternion = LibImplex.Q
+
+local CROSS_OFFSET_A = Quaternion.FromEuler(2.35619449019, 0, 0) -- 135 degrees
+local CROSS_OFFSET_B = Quaternion.FromEuler(0.78539816339, 0, 0) -- 45 degrees
+
 local line3D
 local line3DFlat
 local function DrawLine3D(unitTag1, unitTag2)
     local _, x1, y1, z1 = GetUnitRawWorldPosition(unitTag1)
     local _, x2, y2, z2 = GetUnitRawWorldPosition(unitTag2)
+
+    if (x1 == 0 and y1 == 0 and z1 == 0) or (x2 == 0 and y2 == 0 and z2 == 0) then
+        line3D:SetHidden(true)
+        line3DFlat:SetHidden(true)
+    elseif line3D:IsHidden() or line3DFlat:IsHidden() then
+        line3D:SetHidden(false)
+        line3DFlat:SetHidden(false)
+    end
 
     local fdx = x2 - x1
     local fdy = y2 - y1
@@ -58,13 +71,22 @@ local function DrawLine3D(unitTag1, unitTag2)
     local mz = z1 + fdz * 0.5
 
     local distance = zo_distance3D(x1, y1, z1, x2, y2, z2)
+    if distance < 1e-4 then return end
+
     local col = calculateLineColour(distance) or {1, 0, 1, 1}
     local width = distance / 100.0
     local height = BG.savedVariables.width / 20.0
 
     local yaw = math.pi / 2.0 + math.atan2(fdx, fdz)
     local horizontalDist = math.sqrt(fdx * fdx + fdz * fdz)
-    local roll = -math.atan2(fdy, horizontalDist)
+    local tilt = -math.atan2(fdy, horizontalDist)
+
+    local qTilt = Quaternion.FromEuler(0, 0, tilt)
+    local qLine3D     = qTilt * CROSS_OFFSET_A
+    local qLine3DFlat = qTilt * CROSS_OFFSET_B
+
+    local pitchA, yawA, rollA = Quaternion.ToEuler(qLine3D)
+    local pitchB, yawB, rollB = Quaternion.ToEuler(qLine3DFlat)
 
     local wX, wY, wZ = WorldPositionToGuiRender3DPosition(mx, my + 170, mz)
     if not BG.depthwin:Has3DRenderSpace() then
@@ -78,14 +100,14 @@ local function DrawLine3D(unitTag1, unitTag2)
     end
     line3D:SetColor(unpack(col))
     line3D:Set3DLocalDimensions(width, height)
-    line3D:Set3DRenderSpaceOrientation(2.35619449019, 0.0, roll)
+    line3D:Set3DRenderSpaceOrientation(pitchA, yawA, rollA)
 
     if not line3DFlat:Has3DRenderSpace() then
         line3DFlat:Create3DRenderSpace()
     end
     line3DFlat:SetColor(unpack(col))
     line3DFlat:Set3DLocalDimensions(width, height)
-    line3DFlat:Set3DRenderSpaceOrientation(0.78539816339, 0.0, roll)
+    line3DFlat:Set3DRenderSpaceOrientation(pitchB, yawB, rollB)
 end
 
 local function instantiateLine(control)
